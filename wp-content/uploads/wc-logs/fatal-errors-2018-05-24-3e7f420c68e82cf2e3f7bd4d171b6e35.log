@@ -1,0 +1,12 @@
+2018-05-24T16:22:27+00:00 CRITICAL Class 'WC_Gateway_Stripe' not found
+
+2018-05-24T16:23:06+00:00 CRITICAL Class 'WC_Gateway_Stripe' not found
+
+2018-05-24T16:23:41+00:00 CRITICAL Class 'WC_Gateway_Stripe' not found
+
+2018-05-24T16:48:55+00:00 CRITICAL Call to undefined method WC_Gateway_Stripe::init_form_fields()
+
+2018-05-24T16:50:23+00:00 CRITICAL Call to undefined method WC_Gateway_Stripe::init_settings()
+
+2018-05-24T18:02:04+00:00 CRITICAL Class 'WC_Stripe_Helper' not found
+
