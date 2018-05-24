@@ -52,6 +52,15 @@ class Stripe_Custom {
 
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-stripe-api.php';
 
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-stripe-helper.php';
+
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-stripe-pre-orders-compat.php';
+
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-stripe-payment-request.php';
+
+
+
+
 
         add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateways' ) );
 
