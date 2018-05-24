@@ -714,7 +714,6 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
             $order = wc_get_order( $order_id );
 
             if ( $this->maybe_redirect_stripe_checkout() ) {
-                WC_Stripe_Logger::log( sprintf( 'Redirecting to Stripe Checkout page for order %s', $order_id ) );
 
                 return array(
                     'result'   => 'success',
@@ -738,16 +737,7 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
             $prepared_source = $this->prepare_source( get_current_user_id(), $force_save_source );
             $source_object   = $prepared_source->source_object;
 
-            // Check if we don't allow prepaid credit cards.
-            if ( ! apply_filters( 'wc_stripe_allow_prepaid_card', true ) && $this->is_prepaid_card( $source_object ) ) {
-                $localized_message = __( 'Sorry, we\'re not accepting prepaid cards at this time. Your credit card has not been charge. Please try with alternative payment method.', 'woocommerce-gateway-stripe' );
-                throw new WC_Stripe_Exception( print_r( $source_object, true ), $localized_message );
-            }
 
-            if ( empty( $prepared_source->source ) ) {
-                $localized_message = __( 'Payment processing failed. Please retry.', 'woocommerce-gateway-stripe' );
-                throw new WC_Stripe_Exception( print_r( $prepared_source, true ), $localized_message );
-            }
 
             $this->save_source_to_order( $order, $prepared_source );
 
@@ -773,7 +763,7 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
 
                         $order->add_order_note( $localized_message );
 
-                        throw new WC_Stripe_Exception( print_r( $response, true ), $localized_message );
+
                     }
 
                     // Update order meta with 3DS source.
@@ -784,7 +774,6 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
                         $order->save();
                     }
 
-                    WC_Stripe_Logger::log( 'Info: Redirecting to 3DS...' );
 
                     return array(
                         'result'   => 'success',
@@ -792,7 +781,6 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
                     );
                 }
 
-                WC_Stripe_Logger::log( "Info: Begin processing payment for order $order_id for the amount of {$order->get_total()}" );
 
                 /* If we're doing a retry and source is chargeable, we need to pass
                  * a different idempotency key and retry for success.
@@ -823,7 +811,6 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
                         $wc_token->delete();
                         $localized_message = __( 'This card is no longer available and has been removed.', 'woocommerce-gateway-stripe' );
                         $order->add_order_note( $localized_message );
-                        throw new WC_Stripe_Exception( print_r( $response, true ), $localized_message );
                     }
 
                     // We want to retry.
@@ -842,7 +829,7 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
                         } else {
                             $localized_message = __( 'Sorry, we are unable to process your payment at this time. Please retry later.', 'woocommerce-gateway-stripe' );
                             $order->add_order_note( $localized_message );
-                            throw new WC_Stripe_Exception( print_r( $response, true ), $localized_message );
+
                         }
                     }
 
@@ -856,7 +843,7 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
 
                     $order->add_order_note( $localized_message );
 
-                    throw new WC_Stripe_Exception( print_r( $response, true ), $localized_message );
+
                 }
 
                 do_action( 'wc_gateway_stripe_process_payment', $response, $order );
@@ -878,7 +865,6 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway {
 
         } catch ( WC_Stripe_Exception $e ) {
             wc_add_notice( $e->getLocalizedMessage(), 'error' );
-            WC_Stripe_Logger::log( 'Error: ' . $e->getMessage() );
 
             do_action( 'wc_gateway_stripe_process_payment_error', $e, $order );
 

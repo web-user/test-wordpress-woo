@@ -48,41 +48,27 @@ class WC_Stripe_Pre_Orders_Compat {
      * @param int $order_id
      */
     public function process_pre_order( $order_id ) {
-        try {
-            $order = wc_get_order( $order_id );
+        $order = wc_get_order( $order_id );
 
-            // This will throw exception if not valid.
-            $this->validate_minimum_order_amount( $order );
+        // This will throw exception if not valid.
+        $this->validate_minimum_order_amount( $order );
 
-            $prepared_source = $this->prepare_source( get_current_user_id(), true );
+        $prepared_source = $this->prepare_source( get_current_user_id(), true );
 
-            // We need a source on file to continue.
-            if ( empty( $prepared_source->customer ) || empty( $prepared_source->source ) ) {
-                throw new WC_Stripe_Exception( __( 'Unable to store payment details. Please try again.', 'woocommerce-gateway-stripe' ) );
-            }
 
-            $this->save_source_to_order( $order, $prepared_source );
+        $this->save_source_to_order( $order, $prepared_source );
 
-            // Remove cart
-            WC()->cart->empty_cart();
+        // Remove cart
+        WC()->cart->empty_cart();
 
-            // Is pre ordered!
-            WC_Pre_Orders_Order::mark_order_as_pre_ordered( $order );
+        // Is pre ordered!
+        WC_Pre_Orders_Order::mark_order_as_pre_ordered( $order );
 
-            // Return thank you page redirect
-            return array(
-                'result'   => 'success',
-                'redirect' => $this->get_return_url( $order ),
-            );
-        } catch ( WC_Stripe_Exception $e ) {
-            wc_add_notice( $e->getLocalizedMessage(), 'error' );
-            WC_Stripe_Logger::log( 'Pre Orders Error: ' . $e->getMessage() );
-
-            return array(
-                'result'   => 'success',
-                'redirect' => $order->get_checkout_payment_url( true ),
-            );
-        }
+        // Return thank you page redirect
+        return array(
+            'result'   => 'success',
+            'redirect' => $this->get_return_url( $order ),
+        );
     }
 
     /**
