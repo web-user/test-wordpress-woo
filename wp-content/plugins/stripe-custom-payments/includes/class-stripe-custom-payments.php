@@ -17,29 +17,11 @@ class Stripe_Custom {
 
         $this->stripe_custom = 'stripe-custom-payments';
         $this->version = '1.0.0';
-        $this->load_dependencies();
+
 
 
 
         add_action( 'plugins_loaded', array( $this, 'setup_wc_stripe' ) );
-
-
-    }
-
-
-    private function load_dependencies() {
-
-        /**
-         * The class responsible for orchestrating the actions and filters of the
-         * core plugin.
-         */
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-stripe-custom-payments-loader.php';
-
-
-
-
-
-        $this->loader = new Stripe_Custom_Loader();
 
 
     }
@@ -58,7 +40,7 @@ class Stripe_Custom {
 
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-stripe-payment-request.php';
 
-
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-stripe-customer.php';
 
 
 
@@ -84,9 +66,6 @@ class Stripe_Custom {
     public function add_gateways( $methods ) {
 
         $methods[] = 'WC_Gateway_Stripe';
-
-
-
 
         return $methods;
     }
@@ -124,11 +103,6 @@ class Stripe_Custom {
     }
 
 
-
-
-    public function run() {
-        $this->loader->run();
-    }
 
 
     public function get_plugin_name() {

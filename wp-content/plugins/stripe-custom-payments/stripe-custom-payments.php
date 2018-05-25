@@ -49,7 +49,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-stripe-custom-payments.php
 function run_plugin_name() {
 
     $plugin = new Stripe_Custom();
-    $plugin->run();
+
 
 }
 run_plugin_name();
